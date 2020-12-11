@@ -66,7 +66,7 @@ class Game extends React.Component {
         super(props);
         this.state = {
             history: [{
-                squares:Array(9).fill(null),
+                squares:Array(10).fill(null),
             }],
             stepNumber:0,
             xIsNext: true
@@ -88,6 +88,7 @@ class Game extends React.Component {
             return;
         }
         squares[i] = this.state.xIsNext ? 'X' : 'O';
+        squares[9] = i;
         this.setState({
             //concat 方法 拼接数组
             history: history.concat([{
@@ -109,7 +110,21 @@ class Game extends React.Component {
          */
         //通过map方法，把历史步骤映射为代表按钮的react元素
         const moves = history.map((step,move) => {
-            const desc = move ? 'Go to move #' + move : 'Go to game start';
+            let stepArray = step.squares;
+            var coordinate;
+            switch(stepArray[9]) {
+                case 0 : coordinate = "(0,0)";break;
+                case 1 : coordinate = "(0,1)";break;
+                case 2 : coordinate = "(0,2)";break;
+                case 3 : coordinate = "(1,0)";break;
+                case 4 : coordinate = "(1,1)";break;
+                case 5 : coordinate = "(1,2)";break;
+                case 6 : coordinate = "(2,0)";break;
+                case 7 : coordinate = "(2,1)";break;
+                case 8 : coordinate = "(2,2)";break;
+                default: break;
+            }
+            const desc = move ? 'Go to move #' + move + ",moved in" + coordinate : 'Go to game start';
             return (
                 <li key={move}>
                     <button onClick={() => this.jumpTo(move)}>{desc}</button>
