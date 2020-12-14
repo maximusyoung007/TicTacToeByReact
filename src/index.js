@@ -94,6 +94,10 @@ class Game extends React.Component {
         })
     }
 
+    reverseOrder() {
+        alert("改变顺序");
+    }
+
     render() {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
@@ -151,7 +155,8 @@ class Game extends React.Component {
                         onClick={(i) => this.handleClick(i)}
                     />
                 </div>
-                <div className="game-info"> 
+                <div className="game-info">
+                    <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
                     <ol>{moves}</ol>
                 </div>
             </div>
