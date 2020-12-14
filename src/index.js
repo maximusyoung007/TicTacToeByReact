@@ -32,31 +32,24 @@ class Board extends React.Component {
     //     }
     // }
     renderSquare(i) {
-        return <Square value={this.props.squares[i]}
+        return <Square value={this.props.squares[i]} key={i}
                 onClick={() => this.props.onClick(i)}
         />
     }
 
     render() {
-        //返回一个react元素
+        var k = 0;
+        var board = [];
+        for(var i = 0;i < 3;i++) {
+            var boardRow = [];
+            for(var j = 0;j < 3;j++) {
+                boardRow.push(this.renderSquare(k));
+                k++;
+            }
+            board.push(<div className="board-row" key={i.toString()}>{boardRow}</div>)
+        }
         return(
-            <div>
-                <div className="board-row">
-                     {this.renderSquare(0)}
-                     {this.renderSquare(1)}
-                     {this.renderSquare(2)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(3)}
-                    {this.renderSquare(4)}
-                    {this.renderSquare(5)}
-                </div>
-                <div className="board-row">
-                    {this.renderSquare(6)}
-                    {this.renderSquare(7)}
-                    {this.renderSquare(8)}
-                </div>
-            </div>
+            <div>{board}</div>
         );
     }
 }
@@ -76,7 +69,6 @@ class Game extends React.Component {
     }
 
     jumpTo(step) {
-        console.log("step:" + step);
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0,
