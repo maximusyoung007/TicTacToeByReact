@@ -68,13 +68,15 @@ class Game extends React.Component {
             history: [{
                 squares:Array(10).fill(null),
             }],
-            stepNumber:0,
+            stepNumber: 0,
             xIsNext: true,
-            fontWeight:"normal"
+            fontWeightNormal: "normal",
+            fontWeightBold: "bold"
         };
     }
 
     jumpTo(step) {
+        console.log("step:" + step);
         this.setState({
             stepNumber: step,
             xIsNext: (step % 2) === 0,
@@ -126,11 +128,20 @@ class Game extends React.Component {
                 default: break;
             }
             const desc = move ? 'Go to move #' + move + ",moved in" + coordinate : 'Go to game start';
-            return (
-                <li key={move}>
-                    <button onClick={() => this.jumpTo(move)} style={{fontWeight:this.state.fontWeight}}>{desc}</button>
-                </li>
-            )
+            if(this.state.stepNumber === move) {
+                return (
+                    //条件渲染
+                    <li key={move}>
+                        <button onClick={() => this.jumpTo(move)} style={{fontWeight:this.state.fontWeightBold}}>{desc}</button>
+                    </li>
+                )
+            } else {
+                return (
+                    <li key={move}>
+                        <button onClick={() => this.jumpTo(move)} style={{fontWeight:this.state.fontWeightNormal}}>{desc}</button>
+                    </li>
+                )
+            }
         })
 
         let status;
