@@ -64,7 +64,8 @@ class Game extends React.Component {
             stepNumber: 0,
             xIsNext: true,
             fontWeightNormal: "normal",
-            fontWeightBold: "bold"
+            fontWeightBold: "bold",
+            order: 1
         };
     }
 
@@ -90,12 +91,14 @@ class Game extends React.Component {
                 squares:squares
             }]),
             xIsNext: !this.state.xIsNext,
-            stepNumber: history.length
+            stepNumber: history.length,
         })
     }
 
     reverseOrder() {
-        alert("改变顺序");
+        this.setState({
+            order: this.state.order * (-1)
+        })
     }
 
     render() {
@@ -127,18 +130,25 @@ class Game extends React.Component {
             if(this.state.stepNumber === move) {
                 return (
                     //条件渲染
-                    <li key={move}>
+                    <li key={move?move:0} value={move ? move : 0}>
                         <button onClick={() => this.jumpTo(move)} style={{fontWeight:this.state.fontWeightBold}}>{desc}</button>
                     </li>
                 )
             } else {
                 return (
-                    <li key={move}>
+                    <li key={move?move:0} value={move ? move : 0}>
                         <button onClick={() => this.jumpTo(move)} style={{fontWeight:this.state.fontWeightNormal}}>{desc}</button>
                     </li>
                 )
             }
         })
+
+        let historyList;
+        if(this.state.order === 1) {
+            historyList = moves;
+        } else if(this.state.order === -1) {
+            historyList = moves.reverse();
+        }
 
         let status;
         if(winner) {
@@ -146,21 +156,39 @@ class Game extends React.Component {
         } else {
             status = "Next player is " + (this.state.xIsNext ? 'X' : 'O');
         }
-        return(
-            <div className="game">
-                <div className="game-board">
-                    <div>{status}</div>
-                    <Board
-                        squares={current.squares}
-                        onClick={(i) => this.handleClick(i)}
-                    />
+        if(this.state.order === 1) {
+            return(
+                <div className="game">
+                    <div className="game-board">
+                        <div>{status}</div>
+                        <Board
+                            squares={current.squares}
+                            onClick={(i) => this.handleClick(i)}
+                        />
+                    </div>
+                    <div className="game-info">
+                        <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
+                        <ol>{historyList}</ol>
+                    </div>
                 </div>
-                <div className="game-info">
-                    <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
-                    <ol>{moves}</ol>
+            )
+        } else if(this.state.order === -1) {
+            return(
+                <div className="game">
+                    <div className="game-board">
+                        <div>{status}</div>
+                        <Board
+                            squares={current.squares}
+                            onClick={(i) => this.handleClick(i)}
+                        />
+                    </div>
+                    <div className="game-info">
+                        <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
+                        <ol reverse="true">{historyList}</ol>
+                    </div>
                 </div>
-            </div>
-        )
+            )
+        }
     }
 }
 
