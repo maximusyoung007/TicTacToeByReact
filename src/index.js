@@ -41,8 +41,6 @@ class Board extends React.Component {
     render() {
         let winner = this.props.winner;
         let squares = this.props.squares;
-        console.log("winner:" + this.props.winner);
-        console.log("squares" + this.props.squares);
         let indexArray = [];
         if(winner != null) {
             for(var l = 0;l < squares.length;l++) {
@@ -176,7 +174,11 @@ class Game extends React.Component {
 
         let status;
         if(winner) {
-            status = 'Winner:' + winner;
+            if(winner !== -1) {
+                status = 'Winner:' + winner;
+            } else if(winner === -1) {
+                status = "there is no Winner";
+            }
         } else {
             status = "Next player is " + (this.state.xIsNext ? 'X' : 'O');
         }
@@ -215,6 +217,17 @@ function calculateWinner(squares) {
         if(squares[a] && squares[a] === squares[b] && squares[b] === squares[c]) {
             return squares[a];
         }
+    }
+    let j = 0;
+    for(j = 0;j < 9;j++) {
+        if(squares[j] !== null) {
+            continue;
+        } else {
+            break;
+        }
+    }
+    if(squares[8] !== null && j === 9) {
+        return -1;
     }
     return null;
 }
