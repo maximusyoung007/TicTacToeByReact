@@ -16,34 +16,59 @@ import './index.css'
 
 //将Square定义为函数组件
 function Square(props) {
-    return (
-        <button className="square" onClick={props.onClick}>
-            {props.value}
-        </button>
-    )
+    if(props.isWin === -1) {
+        return (
+            <button className="square" onClick={props.onClick}>
+                {props.value}
+            </button>
+        )
+    } else if(props.isWin === 1) {
+        return (
+            <button className="square" onClick={props.onClick} style={{background:"yellow"}}>
+                {props.value}
+            </button>
+        )
+    }
 }
 
 class Board extends React.Component {
-    // constructor(props) {
-    //     super(props);
-    //     this.state = {
-    //         squares:Array(9).fill(null),
-    //         xIsNext: true
-    //     }
-    // }
-    renderSquare(i) {
-        return <Square value={this.props.squares[i]} key={i}
+    renderSquare(i,isWin) {
+        return <Square value={this.props.squares[i]} key={i} isWin={isWin}
                 onClick={() => this.props.onClick(i)}
         />
     }
 
     render() {
+        let winner = this.props.winner;
+        let squares = this.props.squares;
+        console.log("winner:" + this.props.winner);
+        console.log("squares" + this.props.squares);
+        let indexArray = [];
+        if(winner != null) {
+            for(var l = 0;l < squares.length;l++) {
+                if(winner === 'X') {
+                    if(squares[l] === 'X') {
+                        indexArray.push(l);
+                    }
+                }
+                if(winner === "O") {
+                    if(squares[l] === 'O') {
+                        indexArray.push(l);
+                    }
+                }
+            }
+
+        }
         var k = 0;
         var board = [];
         for(var i = 0;i < 3;i++) {
             var boardRow = [];
             for(var j = 0;j < 3;j++) {
-                boardRow.push(this.renderSquare(k));
+                if(indexArray.indexOf(k) === -1) {
+                    boardRow.push(this.renderSquare(k,-1));
+                } else if(indexArray.indexOf(k) !== -1) {
+                    boardRow.push(this.renderSquare(k,1));
+                }
                 k++;
             }
             board.push(<div className="board-row" key={i.toString()}>{boardRow}</div>)
@@ -105,7 +130,6 @@ class Game extends React.Component {
         const history = this.state.history;
         const current = history[this.state.stepNumber];
         const winner = calculateWinner(current.squares);
-
         /**
          * const numbers = [1, 2, 3];
            const doubled = numbers.map(x => x * 2); // [2, 4, 6]
@@ -156,39 +180,22 @@ class Game extends React.Component {
         } else {
             status = "Next player is " + (this.state.xIsNext ? 'X' : 'O');
         }
-        if(this.state.order === 1) {
-            return(
-                <div className="game">
-                    <div className="game-board">
-                        <div>{status}</div>
-                        <Board
-                            squares={current.squares}
-                            onClick={(i) => this.handleClick(i)}
-                        />
-                    </div>
-                    <div className="game-info">
-                        <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
-                        <ol>{historyList}</ol>
-                    </div>
+        return(
+            <div className="game">
+                <div className="game-board">
+                    <div>{status}</div>
+                    <Board
+                        squares={current.squares}
+                        onClick={(i) => this.handleClick(i)}
+                        winner={winner}
+                    />
                 </div>
-            )
-        } else if(this.state.order === -1) {
-            return(
-                <div className="game">
-                    <div className="game-board">
-                        <div>{status}</div>
-                        <Board
-                            squares={current.squares}
-                            onClick={(i) => this.handleClick(i)}
-                        />
-                    </div>
-                    <div className="game-info">
-                        <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
-                        <ol reverse="true">{historyList}</ol>
-                    </div>
+                <div className="game-info">
+                    <button onClick={() => this.reverseOrder()}>改变历史记录顺序</button>
+                    <ol>{historyList}</ol>
                 </div>
-            )
-        }
+            </div>
+        )
     }
 }
 
